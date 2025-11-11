@@ -5,8 +5,6 @@ Author: Bibhu Prasad Mishra
 
 FPA-DNN Concrete Strength Predictor (Simplified)
 =================================================
-Displays pre-optimized R² values and allows CS prediction
-without retraining the model.
 """
 
 # ---------------------- Imports ----------------------
@@ -54,14 +52,14 @@ st.markdown("""
 st.markdown("""
     <div class='main-title'>
         <h2>🌼 FPA-DNN Concrete Compressive Strength Predictor</h2>
-        <p style='font-size:15px;'>Pre-optimized Deep Neural Network (FPA-DNN) based prediction of CS</p>
+        <p style='font-size:15px;'> </p>
     </div>
 """, unsafe_allow_html=True)
 
 # ---------------------- Load Dataset ----------------------
 try:
     df = pd.read_excel("DATA.xlsx", engine="openpyxl")
-    st.success(f"✅ Loaded dataset successfully — {df.shape[0]} samples, {df.shape[1]} columns")
+    #st.success(f"✅ Loaded dataset successfully — {df.shape[0]} samples, {df.shape[1]} columns")
 except Exception as e:
     st.error(f"❌ Error loading DATA.xlsx: {e}")
     st.stop()
@@ -94,12 +92,12 @@ st.header("⚙️ Model Performance Summary")
 r2_train = 0.95
 r2_test = 0.93
 
-st.success("✅ FPA-DNN model (optimized) loaded successfully.")
-col1, col2 = st.columns(2)
-with col1:
-    st.metric("R² (Training)", f"{r2_train:.3f}")
-with col2:
-    st.metric("R² (Testing)", f"{r2_test:.3f}")
+#st.success("✅ FPA-DNN model (optimized) loaded successfully.")
+#col1, col2 = st.columns(2)
+#with col1:
+  #  st.metric("R² (Training)", f"{r2_train:.3f}")
+#with col2:
+ #   st.metric("R² (Testing)", f"{r2_test:.3f}")
 
 st.markdown("<hr>", unsafe_allow_html=True)
 
@@ -143,4 +141,5 @@ st.markdown("""
 Email: <a href="mailto:bibhumi2121@gmail.com">bibhumi2121@gmail.com</a>
 </div>
 """, unsafe_allow_html=True)
+
 
