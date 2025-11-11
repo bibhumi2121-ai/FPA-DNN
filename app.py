@@ -102,7 +102,7 @@ r2_test = 0.93
 st.markdown("<hr>", unsafe_allow_html=True)
 
 # ---------------------- Prediction Interface ----------------------
-st.header("🔹 Predict Compressive Strength (CS)")
+#st.header("🔹 Predict Compressive Strength (CS)")
 
 cols = st.columns(2)
 inputs = []
@@ -141,6 +141,7 @@ st.markdown("""
 Email: <a href="mailto:bibhumi2121@gmail.com">bibhumi2121@gmail.com</a>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
