@@ -66,10 +66,10 @@ st.markdown("""
 # ---------------------- Dataset ----------------------
 try:
     df = pd.read_excel("DATA.xlsx", engine="openpyxl")
-    #st.success(f"✅ Loaded dataset successfully — {df.shape[0]} samples, {df.shape[1]} columns")
-#except Exception as e:
- #   st.error(f"❌ Error loading dataset: {e}")
-  #  st.stop()
+    st.success(f"✅ Loaded dataset successfully — {df.shape[0]} samples, {df.shape[1]} columns")
+except Exception as e:
+    st.error(f"❌ Error loading dataset: {e}")
+    st.stop()
 
 if "CS" not in df.columns:
     st.error("The dataset must contain a target column named 'CS'.")
@@ -213,4 +213,5 @@ st.markdown("""
 Email: <a href="mailto:bibhumi2121@gmail.com">bibhumi2121@gmail.com</a>
 </div>
 """, unsafe_allow_html=True)
+
 
