@@ -87,7 +87,7 @@ input_vars = [
 ]
 
 # ---------------------- Fixed R² Display ----------------------
-st.header("⚙️ Model Performance Summary")
+#st.header("⚙️ Model Performance Summary")
 
 r2_train = 0.95
 r2_test = 0.93
@@ -141,5 +141,6 @@ st.markdown("""
 Email: <a href="mailto:bibhumi2121@gmail.com">bibhumi2121@gmail.com</a>
 </div>
 """, unsafe_allow_html=True)
+
 
 
