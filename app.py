@@ -66,10 +66,10 @@ st.markdown("""
 # ---------------------- Dataset ----------------------
 try:
     df = pd.read_excel("DATA.xlsx", engine="openpyxl")
-    st.success(f"✅ Loaded dataset successfully — {df.shape[0]} samples, {df.shape[1]} columns")
-except Exception as e:
-    st.error(f"❌ Error loading dataset: {e}")
-    st.stop()
+    #st.success(f"✅ Loaded dataset successfully — {df.shape[0]} samples, {df.shape[1]} columns")
+#except Exception as e:
+ #   st.error(f"❌ Error loading dataset: {e}")
+  #  st.stop()
 
 if "CS" not in df.columns:
     st.error("The dataset must contain a target column named 'CS'.")
@@ -151,7 +151,7 @@ def build_dnn(input_dim, n1=64, n2=32, lr=0.001):
     return model
 
 # ---------------------- Model Training ----------------------
-st.header("⚙️ Model Training and Optimization")
+#st.header("⚙️ Model Training and Optimization")
 
 if st.button("🚀 Run FPA Optimization and Train Model", use_container_width=True):
     best_params, best_r2 = flower_pollination_optimization()
@@ -213,3 +213,4 @@ st.markdown("""
 Email: <a href="mailto:bibhumi2121@gmail.com">bibhumi2121@gmail.com</a>
 </div>
 """, unsafe_allow_html=True)
+
