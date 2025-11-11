@@ -80,15 +80,12 @@ X_scaled = scaler.fit_transform(X)
 # ✳️ Editable Section — You can change variable names or units as per your dataset
 input_vars = [
     ("Cement", "kg/m³"),
-    ("Water", "kg/m³"),
-    ("Fine Aggregate", "kg/m³"),
-    ("Coarse Aggregate", "kg/m³"),
-    ("Superplasticizer", "% of binder"),
-    ("Fly Ash", "% of binder"),
-    ("Silica Fume", "% of binder"),
-    ("Steel Fiber", "% by volume"),
-    ("Graphene Oxide", "% by wt. of cement"),
-    ("Curing Days", "days")
+    ("Natural Coarse Aggregates", "kg/m³"),
+    ("Natural Fine Aggregates", "kg/m³"),
+    ("Washed Recycled Coarse Aggregate", "kg/m³"),
+    ("Zirconia Silica Fume", "% of binder"),
+    ("Steel Slag", "% of binder"),
+    ("super-plasticizer", "% of binder"),
 ]
 
 # ---------------------- Fixed R² Display ----------------------
@@ -146,3 +143,4 @@ st.markdown("""
 Email: <a href="mailto:bibhumi2121@gmail.com">bibhumi2121@gmail.com</a>
 </div>
 """, unsafe_allow_html=True)
+
