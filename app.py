@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 """
 Created on Tue Nov 11 2025
-@author: Bibhu
+Author: Bibhu Prasad Mishra
 
-FPA-DNN Concrete Strength Predictor
-(Using DATA.xlsx)
-===========================================================
-Predicts compressive strength (CS) using Deep Neural Network 
-with Flower Pollination Algorithm–based optimization.
+FPA-DNN Compressive Strength Predictor
+=========================================
+Predicts the Compressive Strength (CS) of concrete
+using a Deep Neural Network optimized via the
+Flower Pollination Algorithm (FPA).
 """
 
 # ---------------------- Imports ----------------------
-import os
 import numpy as np
 import pandas as pd
 import streamlit as st
@@ -20,174 +19,187 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import r2_score
 from tensorflow import keras
 from tensorflow.keras import layers
-import plotly.express as px
-import plotly.graph_objects as go
+import random
 
-# ---------------------- Page Config ----------------------
+# ---------------------- Streamlit Page Setup ----------------------
 st.set_page_config(
-    page_title="FPA-DNN | CS Predictor",
-    page_icon="🧱",
-    layout="wide",
+    page_title="FPA-DNN | Concrete Strength Predictor",
+    page_icon="🌼",
+    layout="centered",
 )
 
-# ---------------------- Styling ----------------------
+# ---------------------- Custom Style ----------------------
 st.markdown("""
     <style>
-    .main {
-        background-color: #f9fafc;
-    }
-    h1, h2, h3 {
-        font-family: 'Times New Roman', serif;
-    }
-    .header {
-        background: linear-gradient(90deg, #0a2472, #1976d2);
-        color: white;
-        padding: 18px;
-        text-align: center;
-        border-radius: 10px;
-    }
-    .result-box {
-        background-color: #ffffff;
-        border-radius: 10px;
-        border: 1px solid #e5e5e5;
-        padding: 20px;
-        text-align: center;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    .footer {
-        text-align: center;
-        color: #6c757d;
-        font-size: 13px;
-        margin-top: 25px;
-    }
+        body {
+            background-color: #f8fafc;
+        }
+        .main-title {
+            background: linear-gradient(90deg, #0f2027, #203a43, #2c5364);
+            padding: 20px;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+        }
+        .predict-box {
+            background-color: white;
+            border-radius: 10px;
+            border: 1px solid #dcdcdc;
+            padding: 18px;
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h2, h3 {
+            font-family: 'Times New Roman', serif;
+        }
     </style>
 """, unsafe_allow_html=True)
 
 # ---------------------- Header ----------------------
 st.markdown("""
-<div class="header">
-    <h2>🌼 FPA-DNN Concrete Strength Predictor</h2>
-    <p style="font-size:15px;color:#e0e0e0;">
-    Predict the Compressive Strength (CS) of concrete using FPA-optimized Deep Neural Network.
-    </p>
-</div>
+    <div class='main-title'>
+        <h2>🌼 FPA-DNN Concrete Compressive Strength Predictor</h2>
+        <p>Deep Neural Network optimized using the Flower Pollination Algorithm</p>
+    </div>
 """, unsafe_allow_html=True)
 
-# ---------------------- Load Dataset ----------------------
-if not os.path.exists("DATA.xlsx"):
-    st.error("❌ `DATA.xlsx` not found in this folder.")
+# ---------------------- Dataset ----------------------
+try:
+    df = pd.read_excel("DATA.xlsx", engine="openpyxl")
+    st.success(f"✅ Loaded dataset successfully — {df.shape[0]} samples, {df.shape[1]} columns")
+except Exception as e:
+    st.error(f"❌ Error loading dataset: {e}")
     st.stop()
 
-df = pd.read_excel("DATA.xlsx", engine="openpyxl")
-st.success(f"✅ Loaded DATA.xlsx successfully — {df.shape[0]} samples, {df.shape[1]} columns.")
-
 if "CS" not in df.columns:
-    st.error("❌ 'CS' column not found. Please ensure your Excel file contains a 'CS' column.")
+    st.error("The dataset must contain a target column named 'CS'.")
     st.stop()
 
 X = df.drop(columns=["CS"])
 y = df["CS"]
 
-X = pd.get_dummies(X, drop_first=True)
+# Define variable names and units (Editable Section)
+# --------------------------------------------------
+# Change names/units easily here if your Excel changes later
+input_vars = [
+    ("Cement", "kg/m³"),
+    ("Water", "kg/m³"),
+    ("Fine Aggregate", "kg/m³"),
+    ("Coarse Aggregate", "kg/m³"),
+    ("Superplasticizer", "% of binder"),
+    ("Fly Ash", "% of binder"),
+    ("Silica Fume", "% of binder"),
+    ("Steel Fiber", "% by volume"),
+    ("Graphene Oxide", "% by wt. of cement"),
+    ("Curing Days", "days")
+]
 
-# ---------------------- Train-Test Split ----------------------
-test_size = st.slider("Test Size (%)", 10, 40, 30, 5)
-seed = st.number_input("Random Seed", value=42, step=1)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size/100, random_state=seed)
+# ---------------------- Data Split ----------------------
+X = np.array(X)
+y = np.array(y)
 
-# Scale Data
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42
+)
+
 scaler = StandardScaler()
-X_train_scaled = scaler.fit_transform(X_train)
-X_test_scaled = scaler.transform(X_test)
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
 
-# ---------------------- Build DNN Model ----------------------
-def build_dnn(input_dim, neurons=[128, 64, 32], dropout=0.15, lr=0.001):
-    model = keras.Sequential()
-    model.add(layers.Input(shape=(input_dim,)))
-    for n in neurons:
-        model.add(layers.Dense(n, activation='relu'))
-        model.add(layers.Dropout(dropout))
-    model.add(layers.Dense(1, activation='linear'))
-    opt = keras.optimizers.Adam(learning_rate=lr)
-    model.compile(optimizer=opt, loss='mse', metrics=['mae'])
+# ---------------------- Flower Pollination Algorithm ----------------------
+def flower_pollination_optimization(n_pop=8, n_iter=15):
+    """Optimizes hidden layers and learning rate."""
+    def fitness(params):
+        n1, n2, lr = params
+        model = build_dnn(X_train.shape[1], n1, n2, lr)
+        model.fit(X_train, y_train, epochs=40, batch_size=16, verbose=0)
+        y_pred = model.predict(X_test).ravel()
+        return r2_score(y_test, y_pred)
+
+    population = [
+        [random.randint(32, 128), random.randint(16, 64), 10 ** random.uniform(-4, -2)]
+        for _ in range(n_pop)
+    ]
+
+    best_sol = max(population, key=fitness)
+    best_score = fitness(best_sol)
+
+    for _ in range(n_iter):
+        for i in range(n_pop):
+            if random.random() < 0.8:
+                new_sol = [max(8, int(best_sol[0] + random.gauss(0, 5))),
+                           max(8, int(best_sol[1] + random.gauss(0, 3))),
+                           abs(best_sol[2] + random.gauss(0, 0.0005))]
+            else:
+                new_sol = [random.randint(32, 128), random.randint(16, 64), 10 ** random.uniform(-4, -2)]
+
+            new_score = fitness(new_sol)
+            if new_score > best_score:
+                best_score, best_sol = new_score, new_sol
+
+    return best_sol, best_score
+
+# ---------------------- DNN Model ----------------------
+def build_dnn(input_dim, n1=64, n2=32, lr=0.001):
+    model = keras.Sequential([
+        layers.Dense(n1, activation='relu', input_shape=(input_dim,)),
+        layers.Dropout(0.1),
+        layers.Dense(n2, activation='relu'),
+        layers.Dense(1)
+    ])
+    model.compile(optimizer=keras.optimizers.Adam(learning_rate=lr), loss='mse')
     return model
 
-# ---------------------- Train Model ----------------------
-st.header("🔹 Train FPA-DNN Model")
+# ---------------------- Model Training ----------------------
+st.header("⚙️ Model Training and Optimization")
 
-epochs = st.number_input("Epochs", 50, 500, 200, 10)
-batch_size = st.selectbox("Batch Size", [16, 32, 64, 128], index=1)
-train_button = st.button("🚀 Train and Predict", use_container_width=True)
+if st.button("🚀 Run FPA Optimization and Train Model", use_container_width=True):
+    best_params, best_r2 = flower_pollination_optimization()
+    n1, n2, lr = best_params
 
-if train_button:
-    model = build_dnn(X_train_scaled.shape[1])
-    hist = model.fit(X_train_scaled, y_train, validation_split=0.15,
-                     epochs=epochs, batch_size=batch_size, verbose=0)
+    model = build_dnn(X_train.shape[1], n1, n2, lr)
+    model.fit(X_train, y_train, epochs=80, batch_size=16, verbose=0)
 
-    y_pred_train = model.predict(X_train_scaled).ravel()
-    y_pred_test = model.predict(X_test_scaled).ravel()
+    y_pred_train = model.predict(X_train).ravel()
+    y_pred_test = model.predict(X_test).ravel()
 
     r2_train = r2_score(y_train, y_pred_train)
     r2_test = r2_score(y_test, y_pred_test)
 
-    col1, col2 = st.columns(2)
-    with col1:
-        st.metric("R² (Train)", f"{r2_train:.3f}")
-    with col2:
-        st.metric("R² (Test)", f"{r2_test:.3f}")
+    st.success(f"✅ FPA Optimization Completed! Best Params → Layers: [{n1}, {n2}], Learning Rate: {lr:.5f}")
+    st.metric("R² (Training)", f"{r2_train:.3f}")
+    st.metric("R² (Testing)", f"{r2_test:.3f}")
 
-    # ---------------------- Plot Results ----------------------
-    st.subheader("📈 Model Evaluation")
+    st.session_state["fpa_model"] = model
+    st.session_state["scaler"] = scaler
 
-    # Train R² Scatter
-    fig_train = px.scatter(
-        x=y_train, y=y_pred_train,
-        labels={'x': 'Actual CS', 'y': 'Predicted CS'},
-        title="R² Fit — Training",
-        color_discrete_sequence=['#1f77b4']
-    )
-    fig_train.add_trace(go.Scatter(
-        x=[y_train.min(), y_train.max()],
-        y=[y_train.min(), y_train.max()],
-        mode='lines',
-        name='1:1 Line',
-        line=dict(color='black', dash='dash')
-    ))
-    st.plotly_chart(fig_train, use_container_width=True)
+# ---------------------- Prediction Interface ----------------------
+st.markdown("<hr>", unsafe_allow_html=True)
+st.header("🔹 Predict Compressive Strength (CS)")
 
-    # Test R² Scatter
-    fig_test = px.scatter(
-        x=y_test, y=y_pred_test,
-        labels={'x': 'Actual CS', 'y': 'Predicted CS'},
-        title="R² Fit — Testing",
-        color_discrete_sequence=['#d62728']
-    )
-    fig_test.add_trace(go.Scatter(
-        x=[y_test.min(), y_test.max()],
-        y=[y_test.min(), y_test.max()],
-        mode='lines',
-        name='1:1 Line',
-        line=dict(color='black', dash='dash')
-    ))
-    st.plotly_chart(fig_test, use_container_width=True)
+cols = st.columns(2)
+inputs = []
 
-    # ---------------------- Prediction Box ----------------------
-    st.subheader("🔸 Predict New Sample")
-    cols = st.columns(3)
-    inputs = []
-    for i, f in enumerate(X.columns):
-        with cols[i % 3]:
-            val = st.number_input(f"{f}", value=float(X[f].mean()), step=0.1, format="%.3f")
-            inputs.append(val)
+for i, (var, unit) in enumerate(input_vars):
+    col = cols[i % 2]
+    with col:
+        val = st.number_input(f"{var} ({unit})", min_value=0.0, step=0.1, format="%.3f")
+        inputs.append(val)
 
-    if st.button("🔮 Predict CS", use_container_width=True):
-        new_x = scaler.transform([inputs])
-        pred = model.predict(new_x).ravel()[0]
+if st.button("🔮 Predict CS", use_container_width=True):
+    if "fpa_model" not in st.session_state:
+        st.warning("Please train the FPA-DNN model first.")
+    else:
+        model = st.session_state["fpa_model"]
+        scaler = st.session_state["scaler"]
+        x_scaled = scaler.transform([inputs])
+        pred_cs = model.predict(x_scaled).ravel()[0]
+
         st.markdown(
             f"""
-            <div class="result-box">
-                <h3 style="color:#004b8d;">Predicted Compressive Strength</h3>
-                <h2 style="color:#16a085; font-size:34px;">{pred:.2f} MPa</h2>
+            <div class="predict-box">
+                <h3 style="color:#0f2027;">Predicted Compressive Strength (CS)</h3>
+                <h2 style="color:#2e8b57;">{pred_cs:.2f} MPa</h2>
             </div>
             """,
             unsafe_allow_html=True
@@ -195,13 +207,9 @@ if train_button:
 
 # ---------------------- Footer ----------------------
 st.markdown("""
-<div class="footer">
-    <hr>
-    <p>
-    <b>Developed by:</b> Bibhu Prasad Mishra (2025) <br>
-    <a href="mailto:bibhumi2121@gmail.com" style="color:gray;text-decoration:none;">
-    bibhumi2121@gmail.com
-    </a>
-    </p>
+<hr>
+<div style='text-align:center; color:gray; font-size:13px;'>
+<b>Developed by:</b> Bibhu Prasad Mishra (2025) <br>
+Email: <a href="mailto:bibhumi2121@gmail.com">bibhumi2121@gmail.com</a>
 </div>
 """, unsafe_allow_html=True)
