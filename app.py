@@ -81,9 +81,11 @@ input_vars = [
     ("Natural Coarse Aggregates", "kg/m³"),
     ("Natural Fine Aggregates", "kg/m³"),
     ("Washed Recycled Coarse Aggregate", "kg/m³"),
-    ("Zirconia Silica Fume", "% of binder"),
-    ("Steel Slag", "% of binder"),
-    ("super-plasticizer", "% of binder"),
+    ("Washed Recycled Fine Aggregate", "kg/m³"),
+    ("Zirconia Silica Fume", "Kg/m³"),
+    ("Steel Slag", "Kg/m³"),
+    ("Water", "Kg/m³"),
+    ("super-plasticizer", "Kg/m³"),
 ]
 
 # ---------------------- Fixed R² Display ----------------------
@@ -141,6 +143,7 @@ st.markdown("""
 Email: <a href="mailto:bibhumi2121@gmail.com">bibhumi2121@gmail.com</a>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
