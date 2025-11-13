@@ -115,7 +115,7 @@ for i, (var, unit) in enumerate(input_vars):
         inputs.append(val)
 
 # ---------------------- Predict Button ----------------------
-if st.button("🔮 Predict CS", use_container_width=True):
+if st.button("Predict Compressive Strength", use_container_width=True):
     try:
         # Simulated prediction formula (for GUI demonstration)
         # You can replace this with your real model output if needed.
@@ -143,6 +143,7 @@ st.markdown("""
 Email: <a href="mailto:bibhumi2121@gmail.com">bibhumi2121@gmail.com</a>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
