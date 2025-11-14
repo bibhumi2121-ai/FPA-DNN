@@ -51,7 +51,7 @@ st.markdown("""
 # ---------------------- Header Section ----------------------
 st.markdown("""
     <div class='main-title'>
-        <h2>🌼 FPA-DNN Concrete Compressive Strength Predictor</h2>
+        <h2>🌼 Prediction of Compressive Strength of RAP-Based Concrete</h2>
         <p style='font-size:15px;'> </p>
     </div>
 """, unsafe_allow_html=True)
@@ -143,6 +143,7 @@ st.markdown("""
 Email: <a href="mailto:bibhumi2121@gmail.com">bibhumi2121@gmail.com</a>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
