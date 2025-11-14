@@ -15,7 +15,7 @@ from sklearn.preprocessing import StandardScaler
 
 # ---------------------- Page Configuration ----------------------
 st.set_page_config(
-    page_title="FPA-DNN | Concrete Strength Predictor",
+    page_title="Prediction of Compressive Strength of RAP-Based Concrete",
     page_icon="🌼",
     layout="centered",
 )
@@ -143,6 +143,7 @@ st.markdown("""
 Email: <a href="mailto:bibhumi2121@gmail.com">bibhumi2121@gmail.com</a>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
