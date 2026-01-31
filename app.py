@@ -146,7 +146,21 @@ if st.button("🔮 Predict Compressive Strength", use_container_width=True):
 # ---------------------- Footer ----------------------
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown(
-    <div style="text-align:center;"> <p style="color:gray;font-size:13px;"> <b>Developed by:</b> Bibhu Prasad Mishra (2025) <br> <a href="mailto:bibhumi2121@gmail.com" style="color:gray;text-decoration:none;"> bibhumi2121@gmail.com </a><br> <span style="font-size:12px;"></span> </p> </div>
+    """
+    <div style="text-align:center;color:gray;font-size:13px;">
+        <p>
+        <b>Developed by:</b> Bibhu Prasad Mishra (2025) <br>
+        FPA–DNN Framework for Compressive Strength Prediction <br>
+        <a href="mailto:bibhumi2121@gmail.com" 
+        style="color:gray;text-decoration:none;">
+        bibhumi2121@gmail.com
+        </a>
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True
 )
+
+
 
 
