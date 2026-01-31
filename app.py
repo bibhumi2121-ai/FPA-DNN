@@ -20,7 +20,6 @@ from tensorflow.keras.optimizers import Adam
 # ---------------------- Page Config ----------------------
 st.set_page_config(
     page_title="FPA–DNN Compressive Strength Predictor",
-    page_icon="🧱",
     layout="centered",
     initial_sidebar_state="collapsed"
 )
@@ -28,7 +27,7 @@ st.set_page_config(
 # ---------------------- Title ----------------------
 st.markdown(
     """
-    <div style="background-color:#0f1896;padding:18px;border-radius:8px;">
+    <div style="background-color:#0f9296;padding:18px;border-radius:8px;">
         <h2 style="color:white;text-align:center;">
         FPA–DNN Based Compressive Strength Predictor
         </h2>
@@ -155,3 +154,4 @@ st.markdown(
     "</p>",
     unsafe_allow_html=True
 )
+
