@@ -19,7 +19,7 @@ from tensorflow.keras.optimizers import Adam
 
 # ---------------------- Page Config ----------------------
 st.set_page_config(
-    page_title="FPA–DNN Compressive Strength Predictor",
+    page_title="Prediction of Compressive Strength of RAP-Based Concrete",
     layout="centered",
     initial_sidebar_state="collapsed"
 )
@@ -30,9 +30,6 @@ st.markdown(
     <div style="background-color:#0f9296;padding:18px;border-radius:8px;">
         <h2 style="color:white;text-align:center;">
         FPA–DNN Based Compressive Strength Predictor
-        </h2>
-        <p style="color:#dcdde1;text-align:center;font-size:14px;">
-        Flower Pollination Algorithm Optimized Deep Neural Network
         </p>
     </div>
     """,
@@ -149,9 +146,7 @@ if st.button("🔮 Predict Compressive Strength", use_container_width=True):
 # ---------------------- Footer ----------------------
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown(
-    "<p style='text-align:center;color:gray;font-size:13px;'>"
-    "Developed by Bibhu Prasad Mishra (2025) | FPA–DNN Framework"
-    "</p>",
-    unsafe_allow_html=True
+    <div style="text-align:center;"> <p style="color:gray;font-size:13px;"> <b>Developed by:</b> Bibhu Prasad Mishra (2025) <br> <a href="mailto:bibhumi2121@gmail.com" style="color:gray;text-decoration:none;"> bibhumi2121@gmail.com </a><br> <span style="font-size:12px;"></span> </p> </div>
 )
+
 
