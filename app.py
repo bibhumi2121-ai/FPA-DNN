@@ -107,7 +107,7 @@ st.sidebar.markdown(
     """
     **Model:** FPA–DNN  
     **Dataset Size:** {samples}  
-    **Input Parameters:** 452  
+    **Input Parameters:** 264  
     **Hidden Layers:** 3  
     **Neurons per Layer:** 128  
     **Optimizer:** Adam  
@@ -160,6 +160,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
 
 
 
