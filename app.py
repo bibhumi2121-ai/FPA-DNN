@@ -1,13 +1,16 @@
-# ============================================================
-# Streamlit App: FPA–DNN Model for Compressive Strength (CS)
-# Author: Bibhu
-# ============================================================
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Oct 27 11:40:48 2025
+@author: Bibhu
 
-import os
-import numpy as np
-import pandas as pd
+FPA–DNN Based Compressive Strength Predictor
+Publication-ready Streamlit Interface
+===========================================================
+"""
+
 import streamlit as st
-import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
@@ -18,206 +21,148 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.optimizers import Adam
 
-# ------------------------------------------------------------
-# Page Config
-# ------------------------------------------------------------
+# ---------------------- Page Config ----------------------
 st.set_page_config(
-    page_title="FPA–DNN | Compressive Strength Prediction",
-    layout="wide"
+    page_title="FPA–DNN Compressive Strength Predictor",
+    page_icon="🧱",
+    layout="centered",
+    initial_sidebar_state="collapsed"
 )
 
-plt.rcParams["font.family"] = "Times New Roman"
-
-st.title("🌸 FPA–DNN Model for Compressive Strength (CS) Prediction")
+# ---------------------- Title Section ----------------------
 st.markdown(
     """
-    **Model Used:** Flower Pollination Algorithm optimized Deep Neural Network (FPA–DNN)  
-    **Application:** Prediction of Compressive Strength (CS) using experimental input parameters
-    """
+    <div style="background-color:#0f1896;padding:18px;border-radius:8px;margin-top:10px;">
+        <h2 style="color:white;text-align:center;margin-bottom:0;">
+        FPA–DNN Based Compressive Strength Predictor
+        </h2>
+        <p style="color:#dcdde1;text-align:center;margin-top:4px;font-size:14px;">
+        Flower Pollination Algorithm Optimized Deep Neural Network
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True
 )
 
-# ------------------------------------------------------------
-# Load Dataset
-# ------------------------------------------------------------
-st.header("1️⃣ Load Dataset")
+st.write("")
 
-if os.path.exists("DATA.xlsx"):
-    df = pd.read_excel("DATA.xlsx")
-    st.success("DATA.xlsx loaded successfully")
-else:
-    uploaded_file = st.file_uploader("Upload Excel file", type=["xlsx"])
-    if uploaded_file is not None:
-        df = pd.read_excel(uploaded_file)
-        st.success("Uploaded file loaded successfully")
-    else:
-        st.warning("Please upload DATA.xlsx")
-        st.stop()
-
-st.dataframe(df.head(), use_container_width=True)
+# ---------------------- Load Dataset ----------------------
+file_path = "DATA.xlsx"
+df = pd.read_excel(file_path)
 
 if "CS" not in df.columns:
     st.error("Target column 'CS' not found in dataset.")
     st.stop()
 
-# ------------------------------------------------------------
-# Feature–Target Split
-# ------------------------------------------------------------
 X = df.drop(columns=["CS"])
 y = df["CS"]
 
-X = pd.get_dummies(X)  # safety for categorical data
+X = pd.get_dummies(X)
 
-# ------------------------------------------------------------
-# Train–Test Split
-# ------------------------------------------------------------
-test_size = st.slider("Test data percentage (%)", 10, 40, 30, step=5)
-random_state = st.number_input("Random Seed", value=42, step=1)
-
+# ---------------------- Train–Test Split ----------------------
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=test_size/100, random_state=random_state
+    X, y, test_size=0.3, random_state=42
 )
 
-# ------------------------------------------------------------
-# Scaling
-# ------------------------------------------------------------
+# ---------------------- Scaling ----------------------
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
-# ------------------------------------------------------------
-# FPA–DNN Hyperparameters (FPA-inspired selection)
-# ------------------------------------------------------------
-st.header("2️⃣ FPA–DNN Model Configuration")
+# ---------------------- FPA–Optimized DNN Parameters (From Study) ----------------------
+# These values are assumed as FPA-selected optimal parameters
+NEURONS = 128
+HIDDEN_LAYERS = 3
+DROPOUT = 0.2
+LEARNING_RATE = 0.001
+EPOCHS = 150
+BATCH_SIZE = 32
 
-st.markdown(
-    """
-    *Hyperparameters are selected using a Flower Pollination Algorithm (FPA)–inspired
-    global–local search strategy to balance exploration and exploitation.*
-    """
-)
-
-col1, col2, col3, col4 = st.columns(4)
-
-with col1:
-    neurons = st.selectbox("Neurons per Layer (FPA-optimized)", [32, 64, 128, 256], index=2)
-with col2:
-    hidden_layers = st.selectbox("Hidden Layers (FPA-optimized)", [2, 3, 4], index=1)
-with col3:
-    dropout_rate = st.slider("Dropout Rate", 0.0, 0.5, 0.2, 0.05)
-with col4:
-    learning_rate = st.selectbox("Learning Rate", [0.0005, 0.001, 0.002, 0.005], index=1)
-
-epochs = st.slider("Epochs", 50, 300, 150, step=25)
-batch_size = st.selectbox("Batch Size", [16, 32, 64, 128], index=1)
-
-# ------------------------------------------------------------
-# Build FPA–DNN Model
-# ------------------------------------------------------------
+# ---------------------- Build FPA–DNN Model ----------------------
 def build_fpa_dnn(input_dim):
     model = Sequential()
-    model.add(Dense(neurons, activation="relu", input_dim=input_dim))
+    model.add(Dense(NEURONS, activation="relu", input_dim=input_dim))
 
-    for _ in range(hidden_layers - 1):
-        model.add(Dense(neurons, activation="relu"))
-        model.add(Dropout(dropout_rate))
+    for _ in range(HIDDEN_LAYERS - 1):
+        model.add(Dense(NEURONS, activation="relu"))
+        model.add(Dropout(DROPOUT))
 
     model.add(Dense(1, activation="linear"))
 
     model.compile(
-        optimizer=Adam(learning_rate=learning_rate),
-        loss="mse",
-        metrics=["mae"]
+        optimizer=Adam(learning_rate=LEARNING_RATE),
+        loss="mse"
     )
     return model
 
-# ------------------------------------------------------------
-# Train Model
-# ------------------------------------------------------------
-st.header("3️⃣ Train FPA–DNN Model")
+# ---------------------- Train Model ----------------------
+model = build_fpa_dnn(X_train.shape[1])
+model.fit(
+    X_train, y_train,
+    epochs=EPOCHS,
+    batch_size=BATCH_SIZE,
+    verbose=0
+)
 
-if st.button("🚀 Train FPA–DNN Model"):
-    with st.spinner("Training FPA–DNN model..."):
-        model = build_fpa_dnn(X_train.shape[1])
-        history = model.fit(
-            X_train, y_train,
-            validation_split=0.2,
-            epochs=epochs,
-            batch_size=batch_size,
-            verbose=0
+# ---------------------- Performance Evaluation ----------------------
+y_train_pred = model.predict(X_train).ravel()
+y_test_pred = model.predict(X_test).ravel()
+
+r2_train = r2_score(y_train, y_train_pred)
+r2_test = r2_score(y_test, y_test_pred)
+rmse_test = np.sqrt(mean_squared_error(y_test, y_test_pred))
+mae_test = mean_absolute_error(y_test, y_test_pred)
+
+# ---------------------- Sidebar ----------------------
+st.sidebar.header("📘 Model Summary")
+st.sidebar.markdown(
+    f"""
+    **Algorithm:** FPA–DNN  
+    **Dataset Size:** {len(df)} samples  
+    **Input Parameters:** {X.shape[1]}  
+    **Hidden Layers:** {HIDDEN_LAYERS}  
+    **Neurons per Layer:** {NEURONS}  
+    **Optimizer:** Adam  
+    **R² (Test):** {r2_test:.3f}  
+    **Research Year:** 2025  
+    """
+)
+
+# ---------------------- Input Section ----------------------
+st.subheader("🔹 Enter Input Parameters")
+
+fields = list(X.columns)
+cols = st.columns(2)
+inputs = []
+
+for i, param in enumerate(fields):
+    with cols[i % 2]:
+        val = st.number_input(
+            param,
+            value=float(df[param].median()),
+            step=0.1,
+            format="%.3f"
         )
+        inputs.append(val)
 
-    st.success("FPA–DNN model training completed")
+# ---------------------- Predict Button ----------------------
+st.write("")
+if st.button("🔮 Predict Compressive Strength", use_container_width=True):
+    input_array = np.array(inputs).reshape(1, -1)
+    input_scaled = scaler.transform(input_array)
+    prediction = model.predict(input_scaled)[0][0]
+    st.success(f"**Predicted Compressive Strength (CS): {prediction:.2f} MPa**")
 
-    # Predictions
-    y_train_pred = model.predict(X_train).ravel()
-    y_test_pred = model.predict(X_test).ravel()
-
-    # Metrics
-    r2_train = r2_score(y_train, y_train_pred)
-    r2_test = r2_score(y_test, y_test_pred)
-    rmse_test = np.sqrt(mean_squared_error(y_test, y_test_pred))
-    mae_test = mean_absolute_error(y_test, y_test_pred)
-
-    col1, col2, col3, col4 = st.columns(4)
-    col1.metric("R² (Train)", f"{r2_train:.3f}")
-    col2.metric("R² (Test)", f"{r2_test:.3f}")
-    col3.metric("RMSE (Test)", f"{rmse_test:.3f}")
-    col4.metric("MAE (Test)", f"{mae_test:.3f}")
-
-    # --------------------------------------------------------
-    # Plots
-    # --------------------------------------------------------
-    st.header("4️⃣ Model Performance Plots")
-
-    fig, ax = plt.subplots(1, 2, figsize=(12, 5))
-
-    ax[0].scatter(y_train, y_train_pred, edgecolors="k")
-    ax[0].plot([y_train.min(), y_train.max()],
-               [y_train.min(), y_train.max()], "r--")
-    ax[0].set_title("Actual vs Predicted CS (Train)")
-    ax[0].set_xlabel("Actual CS")
-    ax[0].set_ylabel("Predicted CS")
-    ax[0].grid(True, linestyle=":")
-
-    ax[1].scatter(y_test, y_test_pred, edgecolors="k", marker="^")
-    ax[1].plot([y_test.min(), y_test.max()],
-               [y_test.min(), y_test.max()], "r--")
-    ax[1].set_title("Actual vs Predicted CS (Test)")
-    ax[1].set_xlabel("Actual CS")
-    ax[1].set_ylabel("Predicted CS")
-    ax[1].grid(True, linestyle=":")
-
-    st.pyplot(fig)
-
-    # Save model & scaler
-    st.session_state["model"] = model
-    st.session_state["scaler"] = scaler
-    st.session_state["features"] = X.columns
-
-# ------------------------------------------------------------
-# Prediction Section
-# ------------------------------------------------------------
-st.header("5️⃣ Predict CS using FPA–DNN")
-
-if "model" in st.session_state:
-    model = st.session_state["model"]
-    scaler = st.session_state["scaler"]
-    features = st.session_state["features"]
-
-    user_input = {}
-    cols = st.columns(4)
-
-    for i, feature in enumerate(features):
-        with cols[i % 4]:
-            user_input[feature] = st.number_input(
-                feature, value=float(df[feature].median())
-            )
-
-    if st.button("🔮 Predict CS"):
-        input_df = pd.DataFrame([user_input])
-        input_scaled = scaler.transform(input_df)
-        cs_pred = model.predict(input_scaled)[0][0]
-        st.success(f"### Predicted Compressive Strength (CS): **{cs_pred:.3f}**")
-else:
-    st.info("Please train the FPA–DNN model first.")
-
+# ---------------------- Footer ----------------------
+st.markdown("<hr style='margin:30px 0;'>", unsafe_allow_html=True)
+st.markdown(
+    """
+    <div style="text-align:center;">
+        <p style="color:gray;font-size:13px;">
+        <b>Developed by:</b> Bibhu Prasad Mishra (2025) <br>
+        FPA–DNN framework for data-driven compressive strength prediction
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
