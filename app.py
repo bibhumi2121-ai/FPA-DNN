@@ -102,7 +102,7 @@ model.fit(
 y_test_pred = model.predict(X_test).ravel()
 
 # ---------------------- Sidebar ----------------------
-st.sidebar.header("📘 Model Summary")
+st.sidebar.header("Model Summary")
 st.sidebar.markdown(
     """
     **Model:** FPA–DNN  
@@ -129,7 +129,7 @@ for i, col in enumerate(X.columns):
     with cols[i % 2]:
         val = st.number_input(
             col,
-            value=0.00,      # ✅ ALL inputs start from 0.00
+            value=0.00,      # ALL inputs start from 0.00
             step=0.01,
             format="%.2f"
         )
@@ -137,7 +137,7 @@ for i, col in enumerate(X.columns):
 
 # ---------------------- Prediction ----------------------
 st.write("")
-if st.button("🔮 Predict Compressive Strength", use_container_width=True):
+if st.button("Predict Compressive Strength", use_container_width=True):
     input_array = np.array(inputs).reshape(1, -1)
     input_scaled = scaler.transform(input_array)
     pred = model.predict(input_scaled)[0][0]
@@ -160,6 +160,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
 
 
 
