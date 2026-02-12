@@ -143,11 +143,11 @@ st.sidebar.header("Model Summary")
 st.sidebar.markdown(
     f"""
     **Model:** FPA–DNN  
-    **Dataset Size:** {len(df)}  
+    **Dataset Size:** 264  
     **Input Parameters:** {X.shape[1]}  
     **Hidden Layers:** 3  
     **Neurons per Layer:** 128  
-    **R²:** 0.95  
+    **R²:** 0.957  
     **Year:** 2025  
     """
 )
@@ -213,5 +213,6 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
 
 
