@@ -154,7 +154,7 @@ st.sidebar.markdown(
 
 
 # ---------------------- Input Section ----------------------
-st.subheader("🔹 Enter Input Parameters")
+st.subheader("Enter Input Parameters")
 
 cols = st.columns(2)
 inputs = []
@@ -183,9 +183,9 @@ if st.button("Predict Compressive Strength", use_container_width=True):
     )
 
     # ---------------------- Main Prediction ----------------------
-    st.success(f"### 🔹 Predicted Compressive Strength: {mean_pred:.2f} MPa")
+    st.success(f"### Predicted Compressive Strength: {mean_pred:.2f} MPa")
 
-    st.markdown("## 🔹 Uncertainty Analysis (95% Confidence Interval)")
+    st.markdown("## Uncertainty Analysis (95% Confidence Interval)")
 
     col1, col2 = st.columns(2)
 
@@ -213,4 +213,5 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
 
