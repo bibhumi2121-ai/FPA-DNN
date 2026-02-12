@@ -198,18 +198,6 @@ if st.button("Predict Compressive Strength", use_container_width=True):
         st.write(f"[ {lower:.2f} , {upper:.2f} ] MPa")
         st.write(f"**Coefficient of Variation:** {cov:.2f} %")
 
-    # ---------------------- Plot Distribution ----------------------
-    st.markdown("### 🔹 Prediction Distribution")
-
-    fig, ax = plt.subplots()
-    ax.hist(preds, bins=20)
-    ax.axvline(mean_pred)
-    ax.set_xlabel("Compressive Strength (MPa)")
-    ax.set_ylabel("Frequency")
-    ax.set_title("Monte Carlo Dropout Prediction Distribution")
-
-    st.pyplot(fig)
-
 
 # ---------------------- Footer ----------------------
 st.markdown("<hr>", unsafe_allow_html=True)
@@ -225,3 +213,4 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
